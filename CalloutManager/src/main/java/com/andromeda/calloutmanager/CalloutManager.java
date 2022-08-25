@@ -51,7 +51,7 @@ public class CalloutManager {
                 } else {
                     if (!isTokenValid(responseData)) {
                         Session.isTokenValid = false;
-                        Session.storeAccessToken(url);
+                        Session.storeAccessToken(url, responseListener);
                         // re enqueue request as token will be refreshed
                         makeCall(url, method, params, responseListener);
                     } else if (responseListener != null)

@@ -22,7 +22,7 @@ public class Session {
     public static String ACCESS_TOKEN = "";
     public static boolean isTokenValid = false;
 
-    public static void storeAccessToken(String url) {
+    public static void storeAccessToken(String url, CalloutManager.ResponseListener responseListener) {
         OkHttpClient okHttpClient = new OkHttpClient();
         RequestBody formBody = new FormBody.Builder()
                 .build();
@@ -34,6 +34,7 @@ public class Session {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: " + e.getMessage());
+                responseListener.onError(e.getMessage());
             }
 
             @Override
@@ -41,14 +42,17 @@ public class Session {
 
                 Log.e(TAG, "onResponse: isSuccessful " + response.isSuccessful());
                 String responseData = response.body().string();
-                if(response.isSuccessful()) {
-                    try {
-                        JSONObject object = new JSONObject(responseData);
+                try {
+                    JSONObject object = new JSONObject(responseData);
+                    if (response.isSuccessful()) {
                         Session.ACCESS_TOKEN = object.getString("access_token");
                         isTokenValid = true;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } else {
+                        responseListener.onError(object.getString("error_description"));
                     }
+                } catch (JSONException e) {
+                    responseListener.onError(e.getMessage());
+                    e.printStackTrace();
                 }
                 Log.e(TAG, "onResponse: " + responseData);
             }
