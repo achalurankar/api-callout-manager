@@ -58,4 +58,18 @@ public class Session {
             }
         });
     }
+
+    public static void storeAccessToken(String url) {
+        storeAccessToken(url, new CalloutManager.ResponseListener() {
+            @Override
+            public void onSuccess(String response) {
+                //do nothing
+            }
+
+            @Override
+            public void onError(String response) {
+                //do nothing
+            }
+        });
+    }
 }
