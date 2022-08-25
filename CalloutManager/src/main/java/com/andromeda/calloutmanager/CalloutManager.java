@@ -33,6 +33,10 @@ public class CalloutManager {
             try {
                 //wait until token is refreshed
                 while (!Session.isTokenValid) {
+                    if(Session.tokenNotAcquired) {
+                        responseListener.onError("Invalid Credentials");
+                        return;
+                    }
                 }
                 OkHttpClient okHttpClient = new OkHttpClient();
                 Request.Builder reqBuilder = new Request.Builder();

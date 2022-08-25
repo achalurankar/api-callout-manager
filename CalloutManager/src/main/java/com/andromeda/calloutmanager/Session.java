@@ -21,6 +21,7 @@ public class Session {
     private static final String TAG = "SESSION";
     public static String ACCESS_TOKEN = "";
     public static boolean isTokenValid = false;
+    public static boolean tokenNotAcquired = false;
 
     public static void storeAccessToken(String url, CalloutManager.ResponseListener responseListener) {
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -35,6 +36,7 @@ public class Session {
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: " + e.getMessage());
                 responseListener.onError(e.getMessage());
+                tokenNotAcquired = true;
             }
 
             @Override
@@ -47,11 +49,14 @@ public class Session {
                     if (response.isSuccessful()) {
                         Session.ACCESS_TOKEN = object.getString("access_token");
                         isTokenValid = true;
+                        tokenNotAcquired = false;
                     } else {
                         responseListener.onError(object.getString("error_description"));
+                        tokenNotAcquired = true;
                     }
                 } catch (JSONException e) {
                     responseListener.onError(e.getMessage());
+                    tokenNotAcquired = true;
                     e.printStackTrace();
                 }
                 Log.e(TAG, "onResponse: " + responseData);
