@@ -36,6 +36,7 @@ public class Session {
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: " + e.getMessage());
                 responseListener.onError(e.getMessage());
+                Session.ACCESS_TOKEN = null;
                 tokenNotAcquired = true;
             }
 
@@ -52,10 +53,12 @@ public class Session {
                         tokenNotAcquired = false;
                     } else {
                         responseListener.onError(object.getString("error_description"));
+                        Session.ACCESS_TOKEN = null;
                         tokenNotAcquired = true;
                     }
                 } catch (JSONException e) {
                     responseListener.onError(e.getMessage());
+                    Session.ACCESS_TOKEN = null;
                     tokenNotAcquired = true;
                     e.printStackTrace();
                 }
